@@ -212,7 +212,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--PM);box-
 <body>
 
 <!-- LOGIN -->
-<div id="login-screen">
+<div id="login-screen" style="display:flex;position:fixed;inset:0;z-index:3000;background:#080808;flex-direction:column;align-items:center;justify-content:center;gap:24px;">
   <img id="logo-login" src="" alt="HM26">
   <div class="lbox">
     <div class="ley">Hillar Moore for DA &middot; 2026</div>
@@ -1249,7 +1249,8 @@ function clearAllData() {
 // ── INIT ──
 function renderAll() { renderDash(); renderRSVPs(); renderEvents(); loadSettings(); }
 
-document.addEventListener('DOMContentLoaded', function() {
+// Run immediately - no DOMContentLoaded needed since script is at bottom of body
+(function init() {
   injectLogos();
   getEl('login-screen').style.display = 'flex';
   getEl('app-shell').style.display = 'none';
@@ -1257,7 +1258,7 @@ document.addEventListener('DOMContentLoaded', function() {
     o.addEventListener('click', function(e) { if (e.target === o) o.classList.remove('visible'); });
   });
   getEl('login-password').addEventListener('keydown', function(e) { if (e.key === 'Enter') doSignIn(); });
-});
+})();
 
 </script>
 </body>
