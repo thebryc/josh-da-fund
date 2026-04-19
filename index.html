@@ -16,8 +16,8 @@
 *{margin:0;padding:0;box-sizing:border-box;}
 body{font-family:"DM Sans",sans-serif;background:var(--CR);color:var(--INK);min-height:100vh;overflow-x:hidden;}
 ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--BK)}::-webkit-scrollbar-thumb{background:var(--P);border-radius:2px}
-#login-screen{display:none;position:fixed;inset:0;z-index:3000;background:var(--BK);flex-direction:column;align-items:center;justify-content:center;gap:24px;}
-#login-screen.visible{display:flex;}
+#login-screen{display:flex;position:fixed;inset:0;z-index:3000;background:var(--BK);flex-direction:column;align-items:center;justify-content:center;gap:24px;}
+#login-screen.hidden{display:none;}
 #login-screen img{width:110px;height:auto;}
 .lbox{background:var(--BS);border:1px solid rgba(79,29,121,.4);border-radius:18px;padding:34px 30px;width:320px;text-align:center;}
 .ley{font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--PM);margin-bottom:8px;}
@@ -29,7 +29,7 @@ body{font-family:"DM Sans",sans-serif;background:var(--CR);color:var(--INK);min-
 .lbtn:hover{background:var(--R);}
 .lerr{color:var(--RS);font-size:11px;margin-top:8px;display:none;}
 #app-shell{display:none;min-height:100vh;}
-#app-shell.visible{display:flex;}
+#app-shell.shown{display:flex;}
 #sidebar{width:224px;flex-shrink:0;background:var(--BK);border-right:1px solid rgba(79,29,121,.22);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:100;overflow-y:auto;}
 .sb-top{padding:18px 16px 14px;border-bottom:1px solid rgba(79,29,121,.18);}
 .sb-top img{width:84px;height:auto;display:block;margin-bottom:10px;}
@@ -212,7 +212,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--PM);box-
 <body>
 
 <!-- LOGIN -->
-<div id="login-screen" class="visible">
+<div id="login-screen">
   <img id="logo-login" src="" alt="HM26">
   <div class="lbox">
     <div class="ley">Hillar Moore for DA &middot; 2026</div>
@@ -686,8 +686,20 @@ function copyDB(obj) { return JSON.parse(JSON.stringify(obj)); }
 function getEl(id) { return document.getElementById(id); }
 function currentEvent() { return DB.events.find(function(e) { return e.id === DB.currentId; }) || DB.events[0]; }
 
-function show(el) { if (typeof el === 'string') el = getEl(el); if (el) el.classList.add('visible'); }
-function hide(el) { if (typeof el === 'string') el = getEl(el); if (el) el.classList.remove('visible'); }
+function show(el) {
+  if (typeof el === 'string') el = getEl(el);
+  if (!el) return;
+  if (el.id === 'login-screen') { el.classList.remove('hidden'); el.style.display = 'flex'; }
+  else if (el.id === 'app-shell') { el.style.display = 'flex'; }
+  else { el.classList.add('visible'); }
+}
+function hide(el) {
+  if (typeof el === 'string') el = getEl(el);
+  if (!el) return;
+  if (el.id === 'login-screen') { el.style.display = 'none'; }
+  else if (el.id === 'app-shell') { el.style.display = 'none'; }
+  else { el.classList.remove('visible'); }
+}
 function openModal(id) { show(id); }
 function closeModal(id) { hide(id); }
 
@@ -1239,6 +1251,7 @@ function renderAll() { renderDash(); renderRSVPs(); renderEvents(); loadSettings
 
 document.addEventListener('DOMContentLoaded', function() {
   injectLogos();
+  getEl('login-screen').style.display = 'flex';
   getEl('app-shell').style.display = 'none';
   document.querySelectorAll('.ov').forEach(function(o) {
     o.addEventListener('click', function(e) { if (e.target === o) o.classList.remove('visible'); });
